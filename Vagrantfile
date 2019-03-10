@@ -64,6 +64,10 @@ Vagrant.configure("2") do |config|
             cp /root/.ssh/id_rsa.pub /export/shared/authorized_keys
         SCRIPT
 
+        master.vm.provision "configuración de hostname", type: "shell", inline: <<-SCRIPT
+            echo "cluster_master" > /etc/hostnmae
+        SCRIPT
+
     end
 
     (1..2).each do |i|
@@ -103,7 +107,7 @@ Vagrant.configure("2") do |config|
             SCRIPT
 
             node.vm.provision "configuración de sitio base", type: "shell", inline: <<-SCRIPT
-                echo "Respondiendo desde la máquina node#{i}" > /var/www/html/index.html
+                echo "Respuesta desde node#{i}" > /var/www/html/index.html
             SCRIPT
     
             node.vm.provision "creación de los directorios", type: "shell", inline: <<-SCRIPT
@@ -123,6 +127,10 @@ Vagrant.configure("2") do |config|
                 mkdir -p /root/.ssh/
                 chmod 700 /root/.ssh/
                 cp /shared/authorized_keys /root/.ssh/ 
+            SCRIPT
+
+            node.vm.provision "configuración de hostname", type: "shell", inline: <<-SCRIPT
+                echo "cluster_node_#{i}" > /etc/hostnmae
             SCRIPT
     
         end
