@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
         master.vm.provider :virtualbox do |vbox|
 
             vbox.name = "cluster_master"
-            vbox.memory = 250
+            vbox.memory = 256
             vbox.cpus = 1
             vbox.customize [ "modifyvm", :id, "--nic2", "hostonly" ]
             vbox.customize [ "modifyvm", :id, "--hostonlyadapter2", "vboxnet0" ]
@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
         SCRIPT
 
         master.vm.provision "configuración de hostname", type: "shell", inline: <<-SCRIPT
-            echo "cluster_master" > /etc/hostnmae
+            echo "cluster_master" > /etc/hostname
         SCRIPT
 
     end
@@ -79,7 +79,7 @@ Vagrant.configure("2") do |config|
             node.vm.provider :virtualbox do |vbox|
     
                 vbox.name = "cluster_node_#{i}"
-                vbox.memory = 250
+                vbox.memory = 256
                 vbox.cpus = 1
                 vbox.customize [ "modifyvm", :id, "--nic2", "hostonly" ]
                 vbox.customize [ "modifyvm", :id, "--hostonlyadapter2", "vboxnet0" ]
@@ -130,7 +130,7 @@ Vagrant.configure("2") do |config|
             SCRIPT
 
             node.vm.provision "configuración de hostname", type: "shell", inline: <<-SCRIPT
-                echo "cluster_node_#{i}" > /etc/hostnmae
+                echo "cluster_node_#{i}" > /etc/hostname
             SCRIPT
     
         end
