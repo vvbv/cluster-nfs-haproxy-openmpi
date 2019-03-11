@@ -1,9 +1,11 @@
 # Cluster NFS, HAProxy y OpenMPI
 
-Script de vagrant para el despliegue de un cluster computacional.
+Comandos necesarios para el despliegue.
 
 ```bash
-Vagrant up
+git clone https://github.com/vvbv/cluster-nfs-haproxy-openmpi.git  
+cd cluster-nfs-haproxy-openmpi  
+Vagrant up  
 ```
 
 ## Copia del archivo Vagrantfile
