@@ -17,6 +17,8 @@ Vagrant.configure("2") do |config|
 
         end
 
+        master.vm.hostname = "master"
+
         master.vm.network "private_network", :ip => '10.11.13.3', :adapter => 2
         
         master.vm.provision "instalación de nfs", type: "shell", inline: <<-SCRIPT
@@ -52,8 +54,8 @@ Vagrant.configure("2") do |config|
             echo "backend haproxy_http" >> /etc/haproxy/haproxy.cfg 
             echo "    balance roundrobin" >> /etc/haproxy/haproxy.cfg 
             echo "    mode http" >> /etc/haproxy/haproxy.cfg 
-            echo "    server node1 10.11.13.4:80 check" >> /etc/haproxy/haproxy.cfg 
-            echo "    server node2 10.11.13.5:80 check" >> /etc/haproxy/haproxy.cfg 
+            echo "    server node1 170.0.0.3:80 check" >> /etc/haproxy/haproxy.cfg 
+            echo "    server node2 170.0.0.4:80 check" >> /etc/haproxy/haproxy.cfg 
             systemctl restart haproxy
             systemctl enable haproxy
         SCRIPT
@@ -62,10 +64,6 @@ Vagrant.configure("2") do |config|
             rm -rf /root/.ssh/*
             ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
             cp /root/.ssh/id_rsa.pub /export/shared/authorized_keys
-        SCRIPT
-
-        master.vm.provision "configuración de hostname", type: "shell", inline: <<-SCRIPT
-            echo "cluster_master" > /etc/hostname
         SCRIPT
 
     end
@@ -82,11 +80,13 @@ Vagrant.configure("2") do |config|
                 vbox.memory = 256
                 vbox.cpus = 1
                 vbox.customize [ "modifyvm", :id, "--nic2", "hostonly" ]
-                vbox.customize [ "modifyvm", :id, "--hostonlyadapter2", "vboxnet0" ]
+                vbox.customize [ "modifyvm", :id, "--hostonlyadapter2", "vboxnet1" ]
     
             end
 
-            node.vm.network "private_network", :ip => "10.11.13.#{i+3}", :adapter => 2
+            node.vm.hostname = "node#{i}"
+
+            node.vm.network "private_network", :ip => "170.0.0.#{i+2}", :adapter => 2
         
             node.vm.provision "instalación de nfs", type: "shell", inline: <<-SCRIPT
                 apt update
@@ -127,10 +127,6 @@ Vagrant.configure("2") do |config|
                 mkdir -p /root/.ssh/
                 chmod 700 /root/.ssh/
                 cp /shared/authorized_keys /root/.ssh/ 
-            SCRIPT
-
-            node.vm.provision "configuración de hostname", type: "shell", inline: <<-SCRIPT
-                echo "cluster_node_#{i}" > /etc/hostname
             SCRIPT
     
         end
